@@ -29,6 +29,7 @@ public class GithubUploadStrategy extends AbstractUploadStrategy {
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^[-\\+]?[\\d]*$");
 
     private HttpClient httpClient;
+
     /**
      * 构建并执行请求
      *
@@ -42,27 +43,28 @@ public class GithubUploadStrategy extends AbstractUploadStrategy {
         String repo = configMap.get(GithubConfigConst.REPO);
         String token = configMap.get(GithubConfigConst.TOKEN);
         String email = configMap.get(GithubConfigConst.EMAIL);
+        String branch = configMap.get(GithubConfigConst.BRANCH);
         // 获取请求链接，同时对path和文件名进行转意，防止中文
         String requestUrl = String.format("https://api.github.com/repos/%s/%s/contents/%s/%s"
                 , user, repo, URLEncoder.encode(path, StandardCharsets.UTF_8), URLEncoder.encode(fileName, StandardCharsets.UTF_8));
-        String requestBody = new GithubEntity.GithubRequestBody("upload_file", user, email, base64Content).toJson();
+        String requestBody = new GithubEntity.GithubRequestBody("upload_file", user, email, branch, base64Content).toJson();
 
         PutMethod putMethod = new PutMethod(requestUrl);
         putMethod.addRequestHeader("Authorization", String.format("token %s", token));
         StringRequestEntity requestEntity = null;
         try {
-            requestEntity  = new StringRequestEntity(requestBody, "application/json", StandardCharsets.UTF_8.toString());
+            requestEntity = new StringRequestEntity(requestBody, "application/json", StandardCharsets.UTF_8.toString());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        if(requestEntity == null){
+        if (requestEntity == null) {
 
         }
         putMethod.setRequestEntity(requestEntity);
         try {
             int statusCode = httpClient.executeMethod(putMethod);
             // github上传文件成功返回201
-            if(HttpStatus.SC_CREATED == statusCode){
+            if (HttpStatus.SC_CREATED == statusCode) {
                 // 请求成功
                 String responseBody = putMethod.getResponseBodyAsString();
                 JSONObject jsonObject = JSON.parseObject(responseBody);
@@ -100,7 +102,7 @@ public class GithubUploadStrategy extends AbstractUploadStrategy {
         return buildAndExecuteRequest(fileName, path, base64Content);
     }
 
-    private boolean isNumber(String target){
+    private boolean isNumber(String target) {
         return NUMBER_PATTERN.matcher(target).matches();
     }
 }

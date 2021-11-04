@@ -20,10 +20,12 @@ public class GithubEntity {
         private String message;
         private Commiter commiter;
         private String content;
+        private String branch;
 
-        public GithubRequestBody(String message, String name, String email, String content) {
+        public GithubRequestBody(String message, String name, String email,String branch, String content) {
             this.message = message;
             this.commiter = new Commiter(name, email);
+            this.branch = branch;
             this.content = content;
         }
 

@@ -19,4 +19,6 @@ public final class GithubConfigConst implements StrategyConfigConst {
      * 仓库
      */
     public static final String REPO = "repo";
+
+    public static final String BRANCH = "branch";
 }
